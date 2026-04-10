@@ -1083,7 +1083,7 @@
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbxwBSf2SpKvtpAHqkI87PxgRO4eRHuD4a1WpcoAYz9dBajydUUsAmJMahm3gWoTiDJ87A/exec";
+const API = "https://script.google.com/macros/s/AKfycbwhK6Xt_lWe4jGidKO4n-yT774a047rvxRhzX6fklakJM0_5QXEEmtWz-GpjPGw2ZAS/exec";
 try { localStorage.setItem('sard_api_url', API); } catch(_e) {}
 
 
@@ -1121,12 +1121,17 @@ async function _apiGet(action, params = {}) {
 }
 
 async function _apiPost(action, payload = {}) {
+  // نستخدم URLSearchParams عمداً — application/json يُطلق preflight
+  // وGoogle Apps Script لا يدعم preflight (CORS OPTIONS)
+  const body = new URLSearchParams();
+  body.set('action', action);
+  body.set('payload', JSON.stringify(payload || {}));
+
   const res = await fetch(API, {
     method: 'POST',
     mode: 'cors',
     credentials: 'omit',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action, data: payload || {} })
+    body
   });
 
   const text = await res.text();
