@@ -1565,7 +1565,7 @@ function _startEvaluationCore() {
     showToast('السجلات ما زالت تُحمّل في الخلفية، جرّب بعد لحظات.', 'info');
     return;
   }
-  const student = STATE.students.find(s => s.id === STATE.selStudent);
+  const student = STATE.students.find(s => String(s.id) === String(STATE.selStudent));
   if (!student) return;
 
   const eff = getEffectiveSettings(student);
@@ -2132,6 +2132,8 @@ function deleteSavedSection(idx) {
     showSpinner();
     _apiPost('saveRecord', {
       studentId: student.id,
+      studentName: student.name,
+      studentHalaqa: student.halaqa,
       teacherName: STATE.teacher,
       date: today,
       sections: nextSections
@@ -2249,7 +2251,7 @@ function doSaveRecord() {
           });
       })
       .withFailureHandler(err => { hideSpinner(); showToast('خطأ في الحفظ: ' + (err.message || err), 'error'); })
-      .saveRecord({ studentId: student.id, teacherName: STATE.teacher, date: today, sections: STATE.evalSections });
+      .saveRecord({ studentId: student.id, studentName: student.name, studentHalaqa: student.halaqa, teacherName: STATE.teacher, date: today, sections: STATE.evalSections });
   });
 }
 
